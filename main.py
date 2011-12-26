@@ -41,16 +41,18 @@ def main():
             game.newGame()
             while not game.isGameOver:
                 game.nextLevel()
-                isTheLevelFinished = False
-                while not isTheLevelFinished:
+                while not game.isTheLevelFinished:
 
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN and event.button == 1:
                             #left mouse button clicked
                             mousePos = pygame.mouse.get_pos()
+                        if event.type == QUIT:
+                            pygame.quit()
+                            sys.exit()
 
                     view.renderGameFrame()
-                gameOver = game.showLevelResults()
+                view.showLevelResults()
 
         elif selectedItem == 1:
             print "how to play"

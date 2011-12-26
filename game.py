@@ -7,6 +7,7 @@ class Game(object):
 
     def __init__(self):
         self.isGameOver = False
+        self.isTheLevelFinished = False
         self.level = 1
         sheepCenter = (200, 200)
         self.sheepList = [random.choice([WhiteSheep(sheepCenter), BlackSheep(sheepCenter), PinkSheep(sheepCenter)])]
@@ -19,10 +20,9 @@ class Game(object):
             sheep.render(scrSurf)
 
     def newGame(self):
-        pass
+        self.level = 1
 
     def nextLevel(self):
-        pass
+        self.level += 1
+        isTheLevelFinished = False
 
-    def showLevelResults(self):
-        return True

@@ -51,3 +51,5 @@ class View:
         pygame.display.update()
         self.fpsClock.tick(60)
 
+    def showLevelResults(self):
+        pass
