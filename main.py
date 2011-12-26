@@ -1,41 +1,71 @@
 #!/usr/bin/python
 
-import pygame,sys
+# Libs
+import pygame
+import sys
+from pygame.locals import *
 
-from general import FPS
-from sheep import *
+# My files
+from game import *
+from view import *
 
+def main():
 
-pygame.init()
-fpsClock = pygame.time.Clock()
-pygame.display.set_caption("Sleepy Sleepy Sheep")
+    # Basic pyGame setup
+    pygame.init()
 
-screenSurface = pygame.display.set_mode(800,600)
+    # Create 
+    game = Game()
+    view = View(game)
 
-player = Player()
-game = Game()
+    hasChosenToQuit = False
+    while not hasChosenToQuit:
+        isInMainMenu = True
+        selectedItem = 0            # 0=Play, 1=How to play, 2=Quit
+        while isInMainMenu:
+            view.renderMainMenuFrame(selectedItem)
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    selectedItem = 2
+                    isInMainMenu = False
+                elif event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        isInMainMenu = False
+                    elif event.key == K_DOWN:
+                        selectedItem = (selectedItem + 1) % 3
+                    elif event.key == K_UP:
+                        selectedItem = (selectedItem - 1) % 3
 
-while True:
+        if selectedItem == 0:
+            # Create new game
+            game.newGame()
+            while not game.isGameOver:
+                game.nextLevel()
+                isTheLevelFinished = False
+                while not isTheLevelFinished:
 
-    waiting=True
-    while waiting:
-        # Show main menu
-        screenSurface.fill((4,2,12))
-        # Wait for space
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == KEYDOWN and event.key == K_SPACE:
-                waiting = False
-        pygame.display.update()
-        fpsClock.tick(FPS)
-        
-    while not gameOver:
-        game.nextLevel()
-        while playingLevel:
-            game.tick()
-            pygame.display.update()
-            fpsClock.tick(FPS)
-        game.showLevelResults()
-    
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                            #left mouse button clicked
+                            mousePos = pygame.mouse.get_pos()
+
+                    view.renderGameFrame()
+                gameOver = game.showLevelResults()
+
+        elif selectedItem == 1:
+            print "how to play"
+            waitingForSpace = True
+            while waitingForSpace:
+                view.renderHowToPlayFrame()
+                for event in pygame.event.get():
+                    if event.type == KEYDOWN and event.key == K_SPACE:
+                        waitingForSpace = False
+
+        elif selectedItem == 2:
+            hasChosenToQuit = True
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == '__main__':
+    main()
