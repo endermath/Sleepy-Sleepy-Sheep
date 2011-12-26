@@ -1,12 +1,12 @@
 import random
 from sheep import *
 from player import *
-from button import *
+from arrowbutton import *
 
 class Game(object):
 
     def __init__(self):
-        self.isNotGameOver
+        self.isGameOver = False
         self.level = 1
         sheepCenter = (200, 200)
         self.sheepList = [random.choice([WhiteSheep(sheepCenter), BlackSheep(sheepCenter), PinkSheep(sheepCenter)])]

@@ -29,12 +29,12 @@ def main():
                     selectedItem = 2
                     isInMainMenu = False
                 elif event.type == KEYDOWN:
-                    if event.key == K_SPACE:
+                    if event.key == K_RETURN:
                         isInMainMenu = False
                     elif event.key == K_DOWN:
-                        selectedItem = (selectedItem + 1) % 3
+                        selectedItem = min(selectedItem + 1, 2)
                     elif event.key == K_UP:
-                        selectedItem = (selectedItem - 1) % 3
+                        selectedItem = max(selectedItem - 1, 0)
 
         if selectedItem == 0:
             # Create new game
