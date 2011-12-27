@@ -41,12 +41,18 @@ def main():
             game.newGame()
             while not game.isGameOver:
                 game.nextLevel()
+                view.nextLevel()
                 while not game.isTheLevelFinished:
 
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN and event.button == 1:
                             #left mouse button clicked
                             mousePos = pygame.mouse.get_pos()
+                            for button in view.buttonIcons:
+                                print mousePos, button.rect
+                                if button.rect.collidepoint(mousePos):
+                                    buttonId = view.buttonIcons.index(button)
+                                    game.arrowButtonPressed(buttonId)
                         if event.type == QUIT:
                             pygame.quit()
                             sys.exit()
