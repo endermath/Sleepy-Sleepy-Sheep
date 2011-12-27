@@ -15,7 +15,8 @@ class Sheep(object):
         # Set direction, and speed of movement.
         self.dir = dir
         self.color = color
-        self.speed = random.gauss(0.10, 0.02)        #speed in screens/second (e.g. 800px/secons)
+        self.speedy = 0
+        self.speedx = random.gauss(0.20, 0.04)        #speed in screens/second (e.g. 800px/secons)
         self.relativePosy = 0.5
         if self.dir == SHEEP_MOVING_LEFT:
             self.relativePosx = 1
@@ -25,12 +26,23 @@ class Sheep(object):
         self.frame = 0
 
     def tick(self, msSinceLastTick):
-        self._counter += msSinceLastTick
-        while self._counter > 500:
-            self.frame = 1 - self.frame
-            self._counter -= 500
+        self._counter = (self._counter + msSinceLastTick) % 1000
+        # if in the air
+        if self.relativePosy < 0.5:
+            self.frame = 1
+            self.speedy += 0.5 * msSinceLastTick / 1000.0
+        else:
+            self.frame = 2 + self._counter / 500
 
-        self.relativePosx += self.dir * msSinceLastTick * self.speed / 1000.0
+        self.relativePosx += self.dir * self.speedx * msSinceLastTick / 1000.0
+        self.relativePosy += self.speedy * msSinceLastTick / 1000.0
+        if self.relativePosy > 0.5 and self.speedy > 0:
+            self.relativePosy = 0.5
+            self.speedy = 0
+
+        if self.relativePosx < 0.55 and self.relativePosx > 0.45 and self.relativePosy == 0.5:
+            self.speedy = -random.gauss(0.40, 0.06)
+
 
 
 

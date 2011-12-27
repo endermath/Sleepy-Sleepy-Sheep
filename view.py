@@ -25,11 +25,11 @@ class View:
         self.buttonUpSurf = pygame.image.load('arrowbutton.png')
         self.buttonDownSurf = pygame.transform.flip(self.buttonUpSurf, False, True)
 
-        self.sheepSurfaceSheet = pygame.image.load("sheep.png")
-        self.sheepSurfList = [[self.sheepSurfaceSheet.subsurface(pygame.Rect(128 * j, 64 * i, 128, 64))   for j in range(3)]  for i in range(2)]
+        self.sheepSurfaceSheet = pygame.image.load("sheep2.png")
+        self.sheepSurfList = [[self.sheepSurfaceSheet.subsurface(pygame.Rect(128 * j, 64 * i, 128, 64))   for j in range(3)]  for i in range(4)]
 
 
-        self.whiteSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 0, 128, 64))
+        self.whiteSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 128, 128, 64))
         #self.whiteSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 64, 128, 64))
         #self.blackSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 0, 128, 64))
         #self.blackSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 64, 128, 64))
