@@ -26,12 +26,15 @@ class View:
         self.buttonDownSurf = pygame.transform.flip(self.buttonUpSurf, False, True)
 
         self.sheepSurfaceSheet = pygame.image.load("sheep.png")
+        self.sheepSurfList = [[self.sheepSurfaceSheet.subsurface(pygame.Rect(128 * j, 64 * i, 128, 64))   for j in range(3)]  for i in range(2)]
+
+
         self.whiteSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 0, 128, 64))
-        self.whiteSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 64, 128, 64))
-        self.blackSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 0, 128, 64))
-        self.blackSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 64, 128, 64))
-        self.pinkSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 0, 128, 64))
-        self.pinkSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 64, 128, 64))
+        #self.whiteSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 64, 128, 64))
+        #self.blackSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 0, 128, 64))
+        #self.blackSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 64, 128, 64))
+        #self.pinkSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 0, 128, 64))
+        #self.pinkSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 64, 128, 64))
 
         self.sheepIcons = []
         self.buttonIcons = []
@@ -104,7 +107,7 @@ class View:
             self.screenSurface.blit(self.cloudSurf, (xpos, self.cloudRect.bottom - self.cloudSurf.get_rect().height))
             xpos += self.cloudSurf.get_rect().width
 
-
+        # Render buttons and icons
         for button in self.buttonIcons:
             self.screenSurface.blit(button.surf, button.rect)
         for sheep in self.sheepIcons:
@@ -116,6 +119,11 @@ class View:
             sheepNumberRect.center = self.sheepIcons[0].rect.center
             self.screenSurface.blit(sheepNumber, sheepNumberRect)
 
+        # Render all the moving sheep
+        for sheep in self.game.sheepList:
+            scrSize = self.screenSurface.get_rect().size
+            sheepSurf = self.sheepSurfList[sheep.frame][sheep.color]
+            self.screenSurface.blit(sheepSurf, (sheep.relativePosx * scrSize[0], sheep.relativePosy * scrSize[1]))
 
         pygame.display.update()
         self.fpsClock.tick(60)

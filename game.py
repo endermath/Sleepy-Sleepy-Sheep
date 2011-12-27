@@ -12,9 +12,17 @@ class Game(object):
         self.level = 1
         sheepCenter = (200, 200)
         self.sheepList = [Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK]))]
+        self.gameClock = pygame.time.Clock()
 
     def tick(self):
+        msSinceLastTick = self.gameClock.tick()
+        for sheep in self.sheepList:
+            sheep.tick(msSinceLastTick)
+
         playingLevel = True
+
+
+
 
     def arrowButtonPressed(self, buttonId):
         # buttonId arrangement

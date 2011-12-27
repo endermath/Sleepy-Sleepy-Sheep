@@ -43,7 +43,6 @@ def main():
                 game.nextLevel()
                 view.nextLevel()
                 while not game.isTheLevelFinished:
-
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN and event.button == 1:
                             #left mouse button clicked
@@ -55,7 +54,7 @@ def main():
                         if event.type == QUIT:
                             pygame.quit()
                             sys.exit()
-
+                    game.tick()
                     view.renderGameFrame()
                 view.showLevelResults()
 
