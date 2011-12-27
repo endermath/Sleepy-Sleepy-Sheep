@@ -1,6 +1,5 @@
 import random
 from sheep import *
-from player import *
 from arrowbutton import *
 
 class Game(object):
