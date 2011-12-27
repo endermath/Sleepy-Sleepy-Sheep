@@ -5,6 +5,7 @@ class Game(object):
     whiteSheepCounter = 0
     blackSheepCounter = 0
     pinkSheepCounter = 0
+    correctSheepCount = [0, 0, 0]
 
     def __init__(self):
         self.isGameOver = False
@@ -13,13 +14,26 @@ class Game(object):
         sheepCenter = (200, 200)
         self.sheepList = [Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK]))]
         self.gameClock = pygame.time.Clock()
+        self.gameCounter = 0
 
     def tick(self):
         msSinceLastTick = self.gameClock.tick()
         for sheep in self.sheepList:
             sheep.tick(msSinceLastTick)
+            if sheep.relativePosx < -0.1:
+                self.correctSheepCount[sheep.color] += 1
+                self.sheepList.remove(sheep)
+                print self.correctSheepCount
+            elif sheep.relativePosx > 1.1:
+                self.correctSheepCount[sheep.color] -= 1
+                self.sheepList.remove(sheep)
+                print self.correctSheepCount
+        self.gameCounter += msSinceLastTick
 
-        playingLevel = True
+        if self.gameCounter > 2000:
+            self.sheepList.append(Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK])))
+            self.gameCounter -= 2000
+
 
 
 

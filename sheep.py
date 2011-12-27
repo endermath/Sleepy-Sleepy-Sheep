@@ -32,3 +32,8 @@ class Sheep(object):
 
         self.relativePosx += self.dir * msSinceLastTick * self.speed / 1000.0
 
+
+
+
+
+
