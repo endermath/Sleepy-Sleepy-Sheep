@@ -49,7 +49,6 @@ def main():
                             #left mouse button clicked
                             mousePos = pygame.mouse.get_pos()
                             for button in view.buttonIcons:
-                                print mousePos, button.rect
                                 if button.rect.collidepoint(mousePos):
                                     buttonId = view.buttonIcons.index(button)
                                     game.arrowButtonPressed(buttonId)

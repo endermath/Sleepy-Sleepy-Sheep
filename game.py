@@ -1,6 +1,5 @@
 import random
 from sheep import *
-from arrowbutton import *
 
 class Game(object):
     whiteSheepCounter = 0
