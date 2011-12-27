@@ -19,6 +19,7 @@ class Game(object):
         self.sheepList = []
         self.gameClock = pygame.time.Clock()
 
+
     def newGame(self):
         self.level = 0
 

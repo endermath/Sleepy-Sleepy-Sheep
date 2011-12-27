@@ -25,6 +25,10 @@ class Sheep(object):
         self._counter = 0
         self.frame = 0
 
+        # Sound effects
+        self.sheepJumpSound = pygame.mixer.Sound('sheepjump.wav')
+
+
     def tick(self, msSinceLastTick):
         self._counter = (self._counter + msSinceLastTick) % 1000
         # if in the air
@@ -40,8 +44,9 @@ class Sheep(object):
             self.relativePosy = 0.5
             self.speedy = 0
 
-        if self.relativePosx < 0.55 and self.relativePosx > 0.45 and self.relativePosy == 0.5:
+        if self.relativePosx < 0.65 and self.relativePosx > 0.55 and self.relativePosy == 0.5:
             self.speedy = -random.gauss(0.40, 0.06)
+            self.sheepJumpSound.play()
 
 
 

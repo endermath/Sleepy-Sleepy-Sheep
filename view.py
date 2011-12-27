@@ -39,6 +39,7 @@ class View:
         self.sheepIcons = []
         self.buttonIcons = []
 
+
     def renderMainMenuFrame(self, selItem):
         bkgColor = DARK_BLUE
         txtColor = pygame.Color(240, 240, 240)
