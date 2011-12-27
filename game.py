@@ -1,6 +1,10 @@
 import random
 from sheep import *
 
+LEVEL_WHEN_BLACK_SHEEP_APPEAR = 5
+LEVEL_WHEN_SHEEP_MOVING_BACKWARDS = 9
+LEVEL_WHEN_PINK_SHEEP_APPEAR = 13
+
 class Game(object):
     whiteSheepCounter = 0
     blackSheepCounter = 0
@@ -12,9 +16,23 @@ class Game(object):
         self.isTheLevelFinished = False
         self.level = 1
         sheepCenter = (200, 200)
-        self.sheepList = [Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK]))]
+        self.sheepList = []
         self.gameClock = pygame.time.Clock()
-        self.gameCounter = 0
+
+    def newGame(self):
+        self.level = 0
+
+    def nextLevel(self):
+        self.level += 1
+        isTheLevelFinished = False
+        self.whiteSheepCounter = 0
+        self.blackSheepCounter = 0
+        self.pinkSheepCounter = 0
+        self.sheepTimer = 0
+        self.nextSheep = 1000
+        self.trollTimer = 0
+        self.trollsAppeared = 0
+        self.timeUntilTroll = random.gauss(1000 * 30.0 / self.level, 1000 * 10)
 
     def tick(self):
         msSinceLastTick = self.gameClock.tick()
@@ -23,17 +41,30 @@ class Game(object):
             if sheep.relativePosx < -0.1:
                 self.correctSheepCount[sheep.color] += 1
                 self.sheepList.remove(sheep)
-                print self.correctSheepCount
+#                print self.correctSheepCount
             elif sheep.relativePosx > 1.1:
                 self.correctSheepCount[sheep.color] -= 1
                 self.sheepList.remove(sheep)
-                print self.correctSheepCount
-        self.gameCounter += msSinceLastTick
+#                print self.correctSheepCount
+        self.sheepTimer += msSinceLastTick
+        self.trollTimer += msSinceLastTick
 
-        if self.gameCounter > 2000:
-            self.sheepList.append(Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK])))
-            self.gameCounter -= 2000
+        if self.sheepTimer > self.nextSheep:
+            if self.level > LEVEL_WHEN_PINK_SHEEP_APPEAR:
+                newSheep = Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK, SHEEP_PINK]))
+            elif self.level > LEVEL_WHEN_BLACK_SHEEP_APPEAR:
+                newSheep = Sheep(SHEEP_MOVING_LEFT, random.choice([SHEEP_WHITE, SHEEP_BLACK]))
+            else:
+                newSheep = Sheep(SHEEP_MOVING_LEFT, SHEEP_WHITE)
+            self.sheepList.append(newSheep)
+            self.sheepTimer = 0
+            self.nextSheep = random.gauss(1000 * 4.0 / self.level, 500.0 / self.level)
 
+        if self.trollsAppeared < self.level / 4 - 1:
+            if self.trollCounter > self.timeUntilTroll:
+                self.trollTimer = 0
+                selt.trollsAppeared += 1
+                print "TROLOL"
 
 
 
@@ -54,13 +85,3 @@ class Game(object):
             self.pinkSheepCounter += 1
         elif buttonId == 5:
             self.pinkSheepCounter -= 1
-
-    def newGame(self):
-        self.level = 0
-
-    def nextLevel(self):
-        self.level += 1
-        isTheLevelFinished = False
-        self.whiteSheepCounter = 0
-        self.blackSheepCounter = 0
-        self.pinkSheepCounter = 0
