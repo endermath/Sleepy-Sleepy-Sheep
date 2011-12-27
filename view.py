@@ -3,6 +3,7 @@ from game import *
 from icon import *
 
 DARK_BLUE = pygame.Color(10, 10, 50)
+CLOUD_COLOR = pygame.Color(240, 240, 240)
 
 class View:
     def __init__(self, gam):
@@ -11,8 +12,15 @@ class View:
         pygame.display.set_caption("Sleepy Sleepy Sheep")
         self.screenSurface = pygame.display.set_mode((800, 600))
 
-        self.menuFont = pygame.font.Font(u'/Library/Fonts/Zapfino.ttf', 34)
-        self.sheepCounterFont = pygame.font.Font(u'/Library/Fonts/Zapfino.ttf', 22)
+        self.menuFont = pygame.font.Font('Calligraffiti.ttf', 34)
+        self.sheepCounterFont = pygame.font.Font('Calligraffiti.ttf', 22)
+        self.sheepCounterFont.set_bold(True)  #'u'/Library/Fonts/Zapfino.ttf', 22)
+
+        self.featherSurf = pygame.image.load('feather.png')
+
+        self.cloudSurf = pygame.image.load('bigcloud.png')
+        self.cloudRect = self.screenSurface.get_rect()
+        self.cloudRect.height = self.cloudRect.height * 3 / 4
 
         self.buttonUpSurf = pygame.image.load('arrowbutton.png')
         self.buttonDownSurf = pygame.transform.flip(self.buttonUpSurf, False, True)
@@ -50,9 +58,11 @@ class View:
         for i in range(4):
             self.screenSurface.blit(txtList[i], rect[i])
 
-        rect5 = rect[1].move(-50, 40 + 80 * selItem)
-        rect5.size = (20, 20)
-        self.screenSurface.fill((255, 255, 255), rect5)
+        featherRect = self.featherSurf.get_rect()
+        featherRect.centerx = rect[2].move(-featherRect.width, 0).left
+        featherRect.centery = rect[1 + selItem].centery
+        self.screenSurface.blit(self.featherSurf, featherRect)
+
         pygame.display.update()
         self.fpsClock.tick(60)
 
@@ -71,7 +81,7 @@ class View:
             # Setup sheep icon
             sheepIconRect = self.whiteSheepSurface1.get_rect()
             sheepIconRect.center = (self.screenSurface.get_rect().centerx,
-                                    self.screenSurface.get_rect().centery * 2 / 3)
+                                    self.screenSurface.get_rect().height / 5)
             self.sheepIcons = [Icon(self.whiteSheepSurface1, sheepIconRect)]
 
             # Setup button icons
@@ -85,6 +95,16 @@ class View:
 
     def renderGameFrame(self):
         self.screenSurface.fill(DARK_BLUE)
+
+        # Render cloud
+        self.screenSurface.fill(CLOUD_COLOR, self.cloudRect)
+        xpos = 0
+        while xpos < self.cloudRect.width:
+            self.screenSurface.blit(pygame.transform.flip(self.cloudSurf, False, True), (xpos, self.cloudRect.top))
+            self.screenSurface.blit(self.cloudSurf, (xpos, self.cloudRect.bottom - self.cloudSurf.get_rect().height))
+            xpos += self.cloudSurf.get_rect().width
+
+
         for button in self.buttonIcons:
             self.screenSurface.blit(button.surf, button.rect)
         for sheep in self.sheepIcons:
