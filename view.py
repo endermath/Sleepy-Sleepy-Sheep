@@ -25,15 +25,19 @@ class View:
         self.buttonUpSurf = pygame.image.load('arrowbutton.png')
         self.buttonDownSurf = pygame.transform.flip(self.buttonUpSurf, False, True)
 
+        self.wallSurf = pygame.image.load('wall.png')
+        self.wallRect = self.wallSurf.get_rect()
+        self.wallRect.midbottom = self.cloudRect.move(0, -self.cloudSurf.get_rect().height).midbottom
+
         self.sheepSurfaceSheet = pygame.image.load("sheep2.png")
         self.sheepSurfList = [[self.sheepSurfaceSheet.subsurface(pygame.Rect(128 * j, 64 * i, 128, 64))   for j in range(3)]  for i in range(4)]
 
 
         self.whiteSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 128, 128, 64))
         #self.whiteSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(0, 64, 128, 64))
-        #self.blackSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 0, 128, 64))
+        self.blackSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 128, 128, 64))
         #self.blackSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(128, 64, 128, 64))
-        #self.pinkSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 0, 128, 64))
+        self.pinkSheepSurface1 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 128, 128, 64))
         #self.pinkSheepSurface2 = self.sheepSurfaceSheet.subsurface(pygame.Rect(256, 64, 128, 64))
 
         self.sheepIcons = []
@@ -81,21 +85,44 @@ class View:
 
     def nextLevel(self):
         # Setup icons
-        if self.game.level < 5:
-            # Setup sheep icon
-            sheepIconRect = self.whiteSheepSurface1.get_rect()
-            sheepIconRect.center = (self.screenSurface.get_rect().centerx,
+        if self.game.level < LEVEL_WHEN_BLACK_SHEEP_APPEAR:
+            sheepIconRect0 = self.whiteSheepSurface1.get_rect()
+            sheepIconRect0.center = (self.screenSurface.get_rect().centerx,
                                     self.screenSurface.get_rect().height / 5)
-            self.sheepIcons = [Icon(self.whiteSheepSurface1, sheepIconRect)]
+            self.sheepIcons = [Icon(self.whiteSheepSurface1, sheepIconRect0)]
+        elif self.game.level < LEVEL_WHEN_PINK_SHEEP_APPEAR:
+            sheepIconRect0 = self.whiteSheepSurface1.get_rect()
+            sheepIconRect0.center = (self.screenSurface.get_rect().centerx - sheepIconRect0.width ,
+                                    self.screenSurface.get_rect().height / 5)
+
+            sheepIconRect1 = self.blackSheepSurface1.get_rect()
+            sheepIconRect1.center = (self.screenSurface.get_rect().centerx + sheepIconRect1.width,
+                                    self.screenSurface.get_rect().height / 5)
+            self.sheepIcons = [Icon(self.whiteSheepSurface1, sheepIconRect0), Icon(self.blackSheepSurface1, sheepIconRect1)]
+        else:
+            sheepIconRect0 = self.whiteSheepSurface1.get_rect()
+            sheepIconRect0.center = (self.screenSurface.get_rect().centerx - sheepIconRect0.width * 2,
+                                    self.screenSurface.get_rect().height / 5)
+
+            sheepIconRect1 = self.blackSheepSurface1.get_rect()
+            sheepIconRect1.center = (self.screenSurface.get_rect().centerx,
+                                    self.screenSurface.get_rect().height / 5)
+
+            sheepIconRect2 = self.pinkSheepSurface1.get_rect()
+            sheepIconRect2.center = (self.screenSurface.get_rect().centerx + sheepIconRect2.width * 2,
+                                    self.screenSurface.get_rect().height / 5)
+            self.sheepIcons = [Icon(self.whiteSheepSurface1, sheepIconRect0),
+                               Icon(self.blackSheepSurface1, sheepIconRect1),
+                               Icon(self.pinkSheepSurface1, sheepIconRect2)]
 
             # Setup button icons
-            buttonUpRect = self.buttonUpSurf.get_rect()
-            buttonUpRect.midbottom = self.sheepIcons[0].rect.midtop
+            #buttonUpRect = self.buttonUpSurf.get_rect()
+            #buttonUpRect.midbottom = self.sheepIcons[0].rect.midtop
 
-            buttonDownRect = self.buttonDownSurf.get_rect()
-            buttonDownRect.midtop = self.sheepIcons[0].rect.midbottom
+            #buttonDownRect = self.buttonDownSurf.get_rect()
+            #buttonDownRect.midtop = self.sheepIcons[0].rect.midbottom
 
-            self.buttonIcons = [Icon(self.buttonUpSurf, buttonUpRect), Icon(self.buttonDownSurf, buttonDownRect)]
+            #self.buttonIcons = [Icon(self.buttonUpSurf, buttonUpRect), Icon(self.buttonDownSurf, buttonDownRect)]
 
     def renderGameFrame(self):
         self.screenSurface.fill(DARK_BLUE)
@@ -109,22 +136,50 @@ class View:
             xpos += self.cloudSurf.get_rect().width
 
         # Render buttons and icons
-        for button in self.buttonIcons:
-            self.screenSurface.blit(button.surf, button.rect)
+        #for button in self.buttonIcons:
+        #    self.screenSurface.blit(button.surf, button.rect)
         for sheep in self.sheepIcons:
             self.screenSurface.blit(sheep.surf, sheep.rect)
 
-        if self.game.level < 5:
-            sheepNumber = self.sheepCounterFont.render(str(self.game.whiteSheepCounter), True, (20, 60, 20))
+        if self.game.level >= LEVEL_WHEN_PINK_SHEEP_APPEAR:
+            sheepNumber = self.sheepCounterFont.render(str(self.game.correctSheepCount[2]), True, (20, 60, 20))
             sheepNumberRect = sheepNumber.get_rect()
-            sheepNumberRect.center = self.sheepIcons[0].rect.center
+            sheepNumberRect.center = self.sheepIcons[2].rect.center
             self.screenSurface.blit(sheepNumber, sheepNumberRect)
+        if self.game.level >= LEVEL_WHEN_BLACK_SHEEP_APPEAR:
+            sheepNumber = self.sheepCounterFont.render(str(self.game.correctSheepCount[1]), True, (20, 60, 20))
+            sheepNumberRect = sheepNumber.get_rect()
+            sheepNumberRect.center = self.sheepIcons[1].rect.center
+            self.screenSurface.blit(sheepNumber, sheepNumberRect)
+
+        sheepNumber = self.sheepCounterFont.render(str(self.game.correctSheepCount[0]), True, (20, 60, 20))
+        sheepNumberRect = sheepNumber.get_rect()
+        sheepNumberRect.center = self.sheepIcons[0].rect.center
+        self.screenSurface.blit(sheepNumber, sheepNumberRect)
+
+
+        # Render the wall
+        self.screenSurface.blit(self.wallSurf, self.wallRect)
 
         # Render all the moving sheep
         for sheep in self.game.sheepList:
             scrSize = self.screenSurface.get_rect().size
             sheepSurf = self.sheepSurfList[sheep.frame][sheep.color]
-            self.screenSurface.blit(sheepSurf, (sheep.relativePosx * scrSize[0], sheep.relativePosy * scrSize[1]))
+            if sheep.dir == SHEEP_MOVING_RIGHT:
+                sheepSurf = pygame.transform.flip(sheepSurf, True, False)
+            sw = sheepSurf.get_rect().width
+            sheepPos = (sheep.relativePosx * (scrSize[0] + sw) - sw , sheep.relativePosy * scrSize[1])
+            sheepRect = pygame.Rect(sheepPos, sheepSurf.get_rect().size)
+            self.screenSurface.blit(sheepSurf, sheepPos)
+
+            sheepHeadRect = sheepRect.inflate(-100, -20).move(sheep.dir * 50, 0)
+            sheepFeetRect = sheepRect.inflate(-40, -40).move(0 , 20)
+            #pygame.draw.rect(self.screenSurface, (0, 0, 0), sheepHeadRect, 2)
+            #pygame.draw.rect(self.screenSurface, (0, 0, 0), sheepFeetRect, 2)
+            if sheepHeadRect.colliderect(self.wallRect.inflate(-20, -20)):
+                sheep.bumpHead()
+            if sheepFeetRect.colliderect(self.wallRect.inflate(-20, -20)):
+                sheep.bumpFeet()
 
         pygame.display.update()
         self.fpsClock.tick(60)
